@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.project.comment.CommentMapper">
+
+	<insert id="insert" parameterType="kr.co.project.comment.CommentVO" >
+		
+		insert into comment (content, memberno, board_no, regdate, table_name) 
+		values(#{content}, #{memberno}, #{board_no}, now(), #{table_name})
+	
+	</insert>
+	
+	<select id="count" parameterType="kr.co.project.comment.CommentVO" resultType="java.lang.Integer">
+	<!-- 테이블 명이 변수로 들어갈수 있음 --><!-- comment테이블은 하나, 여기에 각 페이지의 table_name 구분, 페이지의 게시판 마다 boar_no구분 -->
+		select count(*) from comment
+		where table_name = #{table_name}
+		and board_no =#{board_no}
+		
+	</select>
+	
+	
+	<select id="list" parameterType="kr.co.project.comment.CommentVO" resultType="kr.co.project.comment.CommentVO">
+
+			select * 
+			,(select name from member where no = comment.memberno) as member_name
+			from comment
+			
+			where table_name = #{table_name} and board_no =#{board_no}
+			
+			order by regdate desc
+			limit ${startIdx}, ${pageRow}
+	
+	</select>
+	
+
+	
+	<delete id="delete" parameterType="int">
+		delete from comment where no = #{no} <!-- 여기 no는 pk이라, 유일한 값이기에 다른 조건을 안넣어줘도 된다  -->
+	
+	</delete>
+	
+	
+
+	
+	
+
+	
+	
+
+</mapper>
